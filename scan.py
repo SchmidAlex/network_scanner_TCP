@@ -330,13 +330,40 @@ def compare(overview, oldResult, directory):
             for ports in child.findall('ports') :
                 for port in ports.findall('port') :
                     if port.find('state').attrib['state'] == 'open' :
+
+                        protocol = 'no_protocol'
+                        state = 'no_state'
+                        name = 'no_name'
+                        product = 'no_product'
+                        versionNumber = 'no_version'
+                        conf = 'no_conf'
+
+                        if port.attrib['protocol']:
+                            protocol = str(port.attrib['protocol'])
+
+                        if port.find('state'):
+                            if port.find('state').attrib:
+                                if port.find('state').attrib['state']:
+                                    state = str(port.find('state').attrib['state'])
+
+                        if port.find('service'):
+                            if port.find('service').attrib:
+                                if port.find('state').attrib['name']:
+                                    name = str(port.find('service').attrib['name'])
+                                if port.find('state').attrib['product']:
+                                    product = str(port.find('service').attrib['product'])
+                                if port.find('state').attrib['version']:
+                                    versionNumber = str(port.find('service').attrib['version'])
+                                if port.find('state').attrib['conf']:
+                                    conf = str(port.find('service').attrib['conf'])
+
                         oldOverview[tempHost][str(port.attrib['portid'])] = {
-                            'protocol': str(port.attrib['protocol']),
-                            'state': str(port.find('state').attrib['state']) if 'state' in port.find('state').attrib else "no_state",
-                            'name': str(port.find('service').attrib['name']) if 'name' in port.find('service').attrib else "no_name",
-                            'product': str(port.find('service').attrib['product']) if 'product' in port.find('service').attrib else "no_product",
-                            'versionnumber': str(port.find('service').attrib['version']) if 'version' in port.find('service').attrib else "no_version",
-                            'conf': str(port.find('service').attrib['conf']) if 'conf' in port.find('service').attrib else "no_conf"
+                            'protocol': protocol,
+                            'state': state,
+                            'name': name,
+                            'product': product,
+                            'versionnumber': versionNumber,
+                            'conf': conf
                         }
 
     outfile = open(directory + "/nmap_result_difference.txt", "at")
